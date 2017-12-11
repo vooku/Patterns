@@ -1,3 +1,6 @@
+Builds/VisualStudio2017/.vs/*
+Builds/VisualStudio2017/x64/*
+
 # Prerequisites
 *.d
 
@@ -15,6 +18,8 @@
 *.so
 *.dylib
 *.dll
+*.vst3
+*.vst
 
 # Fortran module files
 *.mod
