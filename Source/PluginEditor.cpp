@@ -18,7 +18,7 @@ PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcess
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize (200, 200);
 }
 
 PatternsAudioProcessorEditor::~PatternsAudioProcessorEditor()
@@ -33,7 +33,7 @@ void PatternsAudioProcessorEditor::paint (Graphics& g)
 
     g.setColour (Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
+    g.drawFittedText("PATTERNS", 0, 0, getWidth(), 30, Justification::centred, 1);
 }
 
 void PatternsAudioProcessorEditor::resized()

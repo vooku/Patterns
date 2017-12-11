@@ -11,7 +11,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-
 //==============================================================================
 PatternsAudioProcessor::PatternsAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -82,15 +81,18 @@ int PatternsAudioProcessor::getCurrentProgram()
 
 void PatternsAudioProcessor::setCurrentProgram (int index)
 {
+    ignoreUnused(index);
 }
 
 const String PatternsAudioProcessor::getProgramName (int index)
 {
+    ignoreUnused(index);
     return {};
 }
 
 void PatternsAudioProcessor::changeProgramName (int index, const String& newName)
 {
+    ignoreUnused(index, newName);
 }
 
 //==============================================================================
@@ -98,6 +100,7 @@ void PatternsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    ignoreUnused(sampleRate, samplesPerBlock);
 }
 
 void PatternsAudioProcessor::releaseResources()
@@ -132,27 +135,22 @@ bool PatternsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 
 void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    ScopedNoDenormals noDenormals;
-    const int totalNumInputChannels  = getTotalNumInputChannels();
-    const int totalNumOutputChannels = getTotalNumOutputChannels();
+    buffer.clear();
+    midiMessages.clear();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
-    for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
-
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    if (AudioPlayHead* ph = getPlayHead())
     {
-        float* channelData = buffer.getWritePointer (channel);
+        AudioPlayHead::CurrentPositionInfo currentPlayHead;
 
-        // ..do something to the data...
+        if (ph->getCurrentPosition(currentPlayHead))
+        {
+            if (fmod(currentPlayHead.timeInSeconds, 1) == 0)
+                midiMessages.addEvent(MidiMessage::noteOn(1, 63, uint8(127)), 0);
+            else if (fmod(currentPlayHead.timeInSeconds, 1.5) == 0)
+                midiMessages.addEvent(MidiMessage::noteOff(1, 63), 0);
+        }
     }
+
 }
 
 //==============================================================================
@@ -172,12 +170,14 @@ void PatternsAudioProcessor::getStateInformation (MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    ignoreUnused(destData);
 }
 
 void PatternsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    ignoreUnused(data, sizeInBytes);
 }
 
 //==============================================================================
