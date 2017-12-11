@@ -18,6 +18,8 @@
 class PatternsAudioProcessor  : public AudioProcessor
 {
 public:
+    bool midiOut;
+
     //==============================================================================
     PatternsAudioProcessor();
     ~PatternsAudioProcessor();

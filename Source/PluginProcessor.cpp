@@ -21,7 +21,8 @@ PatternsAudioProcessor::PatternsAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+      midiOut(true)
 #endif
 {
 }
@@ -138,16 +139,20 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
     buffer.clear();
     midiMessages.clear();
 
-    if (AudioPlayHead* ph = getPlayHead())
-    {
+    if (AudioPlayHead* ph = getPlayHead()) {
         AudioPlayHead::CurrentPositionInfo currentPlayHead;
+        int beatLen = getSampleRate() / 4;
+        auto nSamples = buffer.getNumSamples();
 
-        if (ph->getCurrentPosition(currentPlayHead))
-        {
-            if (fmod(currentPlayHead.timeInSeconds, 1) == 0)
-                midiMessages.addEvent(MidiMessage::noteOn(1, 63, uint8(127)), 0);
-            else if (fmod(currentPlayHead.timeInSeconds, 1.5) == 0)
-                midiMessages.addEvent(MidiMessage::noteOff(1, 63), 0);
+        if (ph->getCurrentPosition(currentPlayHead)) {
+            if (currentPlayHead.timeInSamples % beatLen == 0) {
+                //midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), 0);
+                midiOut = !midiOut;
+            }
+            if (currentPlayHead.timeInSamples % int(1.5 * beatLen) == 0) {
+                //    midiMessages.addEvent(MidiMessage::noteOff(1, 36), 0);
+                //midiOut = false;
+            }
         }
     }
 
