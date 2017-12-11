@@ -145,7 +145,7 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         auto nSamples = buffer.getNumSamples();
 
         if (ph->getCurrentPosition(currentPlayHead)) {
-            if (currentPlayHead.timeInSamples % beatLen == 0) {
+            if (currentPlayHead.timeInSamples % 1000 == 0) {
                 //midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), 0);
                 midiOut = !midiOut;
             }
