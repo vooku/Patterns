@@ -19,6 +19,7 @@ class PatternsAudioProcessor  : public AudioProcessor
 {
 public:
     bool midiOut;
+    AudioParameterInt* quantization;
 
     //==============================================================================
     PatternsAudioProcessor();

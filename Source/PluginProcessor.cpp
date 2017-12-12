@@ -25,6 +25,7 @@ PatternsAudioProcessor::PatternsAudioProcessor()
       midiOut(true)
 #endif
 {
+    addParameter(quantization = new AudioParameterInt("quantization", "Quantization", 1, 32, 4));
 }
 
 PatternsAudioProcessor::~PatternsAudioProcessor()
@@ -145,13 +146,9 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         auto nSamples = buffer.getNumSamples();
 
         if (ph->getCurrentPosition(currentPlayHead)) {
-            if (currentPlayHead.timeInSamples % 1000 == 0) {
+            if (currentPlayHead.isPlaying && currentPlayHead.timeInSamples % (*quantization * 10) == 0) {
                 //midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), 0);
                 midiOut = !midiOut;
-            }
-            if (currentPlayHead.timeInSamples % int(1.5 * beatLen) == 0) {
-                //    midiMessages.addEvent(MidiMessage::noteOff(1, 36), 0);
-                //midiOut = false;
             }
         }
     }
@@ -172,17 +169,12 @@ AudioProcessorEditor* PatternsAudioProcessor::createEditor()
 //==============================================================================
 void PatternsAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
-    ignoreUnused(destData);
+    MemoryOutputStream(destData, true).writeInt(*quantization);
 }
 
 void PatternsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-    ignoreUnused(data, sizeInBytes);
+    *quantization = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readInt();
 }
 
 //==============================================================================

@@ -13,14 +13,26 @@
 
 #define DOT_D 10
 
-
 //==============================================================================
 PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), drawDot(false)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
     setSize (200, 200);
+
+    // these define the parameters of our slider object
+    quantization.setSliderStyle(Slider::RotaryVerticalDrag);
+    quantization.setRange(1.0, 32.0, 1.0);
+    quantization.setTextBoxStyle(Slider::NoTextBox, false, 90, 20);
+    quantization.setPopupDisplayEnabled(true, true, this);
+    quantization.setTextValueSuffix(" Quantization");
+    quantization.setValue(4.0);
+
+    // this function adds the slider to the editor
+    addAndMakeVisible(&quantization);
+
+    // add the listener to the slider
+    quantization.addListener(this);
+
     startTimer(33);
 }
 
@@ -43,14 +55,20 @@ void PatternsAudioProcessorEditor::paint (Graphics& g)
 
 void PatternsAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    quantization.setBounds(0.1 * getWidth(), 40, 50, 70);
 }
 
 void PatternsAudioProcessorEditor::timerCallback()
 {
+    quantization.setValue(*processor.quantization);
+
     if (drawDot != processor.midiOut) {
         drawDot = processor.midiOut;
         repaint();
     }
+}
+
+void PatternsAudioProcessorEditor::sliderValueChanged(Slider* slider)
+{
+    *processor.quantization = quantization.getValue();
 }
