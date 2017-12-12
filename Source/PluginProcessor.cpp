@@ -137,16 +137,17 @@ bool PatternsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 
 void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+    debugText = std::to_string(buffer.getNumSamples());
+    
     buffer.clear();
     midiMessages.clear();
 
     if (AudioPlayHead* ph = getPlayHead()) {
         AudioPlayHead::CurrentPositionInfo currentPlayHead;
-        int beatLen = getSampleRate() / 4;
-        auto nSamples = buffer.getNumSamples();
-
+        
         if (ph->getCurrentPosition(currentPlayHead)) {
-            if (currentPlayHead.isPlaying && currentPlayHead.timeInSamples % (*quantization * 10) == 0) {
+            debugText += " " + std::to_string(currentPlayHead.timeInSamples);
+            if (currentPlayHead.isPlaying && currentPlayHead.timeInSamples % int(getSampleRate() / 2) == 0) {
                 //midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), 0);
                 midiOut = !midiOut;
             }

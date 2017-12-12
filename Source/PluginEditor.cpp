@@ -49,6 +49,8 @@ void PatternsAudioProcessorEditor::paint (Graphics& g)
     g.setColour (Colours::deeppink);
     g.setFont (15.0f);
     g.drawFittedText("PATTERNS", 0, 0, getWidth(), 30, Justification::centred, 1);
+    g.drawFittedText(processor.debugText, 0, 30, getWidth(), 30, Justification::centred, 1);
+
     if (drawDot)
         g.fillEllipse(0.5 * (getWidth() - DOT_D), 0.5 * (getHeight() - DOT_D), DOT_D, DOT_D);
 }
@@ -60,6 +62,8 @@ void PatternsAudioProcessorEditor::resized()
 
 void PatternsAudioProcessorEditor::timerCallback()
 {
+    repaint(); // TODO remove this
+
     quantization.setValue(*processor.quantization);
 
     if (drawDot != processor.midiOut) {

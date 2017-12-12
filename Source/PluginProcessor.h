@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <string>
 
 //==============================================================================
 /**
@@ -20,6 +21,7 @@ class PatternsAudioProcessor  : public AudioProcessor
 public:
     bool midiOut;
     AudioParameterInt* quantization;
+    std::string debugText;
 
     //==============================================================================
     PatternsAudioProcessor();
