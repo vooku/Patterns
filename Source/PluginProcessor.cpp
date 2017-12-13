@@ -22,14 +22,14 @@ PatternsAudioProcessor::PatternsAudioProcessor()
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        ),
-      midiOut(false),
-      nextBeat(0),
-      noteOff(0)
 #endif
+      mEngine(mRandomDevice()),
+      mDistribution(0.0f, 1.0f),
+      debugText("PATTERNS")
 {
-    mTracks.push_back(new DrumTrack{ "Kick", 1.0f, 2, false });
-    mTracks.push_back(new DrumTrack{ "Snare", 0.7f, 4, true });
-    mTracks.push_back(new DrumTrack{ "Hi-Hat", 0.3f, 16, false });
+    mTracks.push_back(new DrumTrack{ "Kick", 36, 1.0f, 2, false });
+    mTracks.push_back(new DrumTrack{ "Snare", 38, 0.7f, 1, true });
+    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, 0.3f, 8, false });
 
     for (int i = 0; i < mTracks.size(); i++) {
         auto name = mTracks[i]->getName();
@@ -168,29 +168,21 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         if (ph->getCurrentPosition(currentPlayHead)) {
             if (currentPlayHead.isPlaying) {
                 for (int i = 0; i <= buffer.getNumSamples(); i++) {
-                    debugText = " " + std::to_string(currentPlayHead.timeInSamples + i);
+                    //debugText = std::to_string(currentPlayHead.timeInSamples + i);
 
-                    if (noteOff && noteOff <= currentPlayHead.timeInSamples + i) {
-                        midiMessages.addEvent(MidiMessage::noteOff(1, 36), i);
-
-                        midiOut = false;
-                        noteOff = 0;
-                    }
-                    if (nextBeat <= currentPlayHead.timeInSamples + i) {
-                        midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), i);
-                        
-                        midiOut = true;
-                        noteOff = nextBeat + getSampleRate() / 4;
-                        nextBeat += getSampleRate() / 2;
+                    for (auto& track : mTracks) {
+                        track->process(midiMessages,
+                                       currentPlayHead.timeInSamples,
+                                       i,
+                                       getSampleRate(),
+                                       mDistribution(mEngine));
                     }
                 }
             }
             else {
-                midiMessages.addEvent(MidiMessage::noteOff(1, 36), 0);
-
-                midiOut = false;
-                noteOff = 0;
-                nextBeat = 0;
+                for (auto& track : mTracks) {
+                    track->stop(midiMessages);
+                }
             }
         }
     }
@@ -211,11 +203,13 @@ AudioProcessorEditor* PatternsAudioProcessor::createEditor()
 //==============================================================================
 void PatternsAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
+    ignoreUnused(destData);
     //MemoryOutputStream(destData, true).writeInt(*quantization);
 }
 
 void PatternsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
+    ignoreUnused(data, sizeInBytes);
     //*quantization = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readInt();
 }
 

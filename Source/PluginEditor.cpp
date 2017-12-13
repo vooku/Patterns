@@ -42,8 +42,8 @@ void PatternsAudioProcessorEditor::paint (Graphics& g)
 
     g.setColour (COLOR_HIGHLIGHT);
     g.setFont (15.0f);
-    g.drawFittedText("PATTERNS", 0, 0, getWidth(), 30, Justification::centred, 1);
-    //g.drawFittedText(processor.debugText, 0, 30, getWidth(), 30, Justification::centred, 1);
+    //g.drawFittedText("PATTERNS", 0, 0, getWidth(), 30, Justification::centred, 1);
+    g.drawFittedText(processor.debugText, 0, 0, getWidth(), 30, Justification::centred, 1);
 
     for (int i = 0; i < processor.mTracks.size(); i++) {
         processor.mTracks[i]->paint(g, (i + 0.5) * TRACK_OFFSET, 30, TRACK_OFFSET);

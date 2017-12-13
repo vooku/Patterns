@@ -14,6 +14,7 @@
 #include <string>
 #include "DrumTrack.h"
 #include <vector>
+#include <random>
 
 //==============================================================================
 /**
@@ -22,8 +23,6 @@ class PatternsAudioProcessor  : public AudioProcessor
 {
 public:
     std::vector<DrumTrack*> mTracks;
-    bool midiOut;
-    //AudioParameterInt* quantization;
     std::string debugText;
 
     //==============================================================================
@@ -64,8 +63,9 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    juce::int64 nextBeat;
-    juce::int64 noteOff;
+    std::random_device mRandomDevice;
+    std::mt19937_64 mEngine;
+    std::uniform_real_distribution<float> mDistribution;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PatternsAudioProcessor)

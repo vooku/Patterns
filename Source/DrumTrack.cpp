@@ -3,13 +3,16 @@
 #define DOT_D 10
 
 DrumTrack::DrumTrack()
-    : DrumTrack("", 1.0f, 4, false)
+    : DrumTrack("", 36, 1.0f, 4, false)
 {
 }
 
-DrumTrack::DrumTrack(const std::string& name, float probability, int quantization, bool offset)
+DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization, bool offset)
     : mName(name),
-      mActive(true) // TODO change this
+      mNote(note),
+      mActive(false),
+      mNextOn(0),
+      mNextOff(0)
 {
     mProbSlider.setSliderStyle(Slider::RotaryVerticalDrag);
     mProbSlider.setRange(0.0, 1.0, 0.01);
@@ -34,11 +37,13 @@ DrumTrack::DrumTrack(const std::string& name, float probability, int quantizatio
 
 void DrumTrack::paint(Graphics& g, int x, int y, int w) const
 {
+    g.setColour(COLOR_HIGHLIGHT);
     g.drawFittedText(mName, x, y, w, 30, Justification::centred, 1);
 
     g.setColour(COLOR_FRAME);
     float ringD = 1.2f * DOT_D;
     g.drawEllipse(x + 0.5 * (w - ringD), y + 35 - 0.5 * ringD, ringD, ringD, 2.0f);
+
     if (mActive) {
         g.setColour(COLOR_HIGHLIGHT);
         g.fillEllipse(x + 0.5 * (w - DOT_D), y + 35 - 0.5 * DOT_D, DOT_D, DOT_D);
@@ -47,8 +52,8 @@ void DrumTrack::paint(Graphics& g, int x, int y, int w) const
 
 void DrumTrack::resized(int x, int y, int w)
 {
-    mProbSlider.setBounds(x, y + 40, 50, 50);
-    mQuantSlider.setBounds(x, y + 80, 50, 50);
+    mProbSlider.setBounds(x, y + 40, w, w);
+    mQuantSlider.setBounds(x, y + 80, w, w);
 }
 
 void DrumTrack::update()
@@ -57,10 +62,41 @@ void DrumTrack::update()
     mQuantSlider.setValue(*mQuantParam);
 }
 
+void DrumTrack::process(MidiBuffer & midiMessages, const juce::int64 & timeInSamples, int sampleOffset, const juce::int64& sampleRate, float randomNumber)
+{
+    if (mActive && mNextOff <= timeInSamples + sampleOffset) {
+        midiMessages.addEvent(MidiMessage::noteOff(1, mNote), sampleOffset);
+
+        mActive = false;
+    }
+    if (mNextOn <= timeInSamples + sampleOffset) {
+        if (*mProbParam >= randomNumber) {
+            midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(127)), sampleOffset);
+            mNextOff = mNextOn + sampleRate / (*mQuantParam * 2);
+            mActive = true;
+        }
+        
+        mNextOn += sampleRate / *mQuantParam;
+    }
+}
+
+void DrumTrack::stop(MidiBuffer & midiMessages)
+{
+    if (mActive) {
+        midiMessages.addEvent(MidiMessage::noteOff(1, mNote), 0);
+    }
+
+    mActive = false;
+    mNextOn = 0;
+    mNextOff = 0;
+}
+
 void DrumTrack::sliderValueChanged(Slider* slider)
 {
+    ignoreUnused(slider);
+
     *mProbParam = mProbSlider.getValue();
-    *mQuantParam = mQuantSlider.getValue();
+    *mQuantParam = (int)mQuantSlider.getValue();
 }
 
 
