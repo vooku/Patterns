@@ -22,7 +22,8 @@ PatternsAudioProcessor::PatternsAudioProcessor()
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        ),
-      midiOut(true)
+      midiOut(true),
+      nextBeat(0)
 #endif
 {
     addParameter(quantization = new AudioParameterInt("quantization", "Quantization", 1, 32, 4));
@@ -146,10 +147,15 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         AudioPlayHead::CurrentPositionInfo currentPlayHead;
         
         if (ph->getCurrentPosition(currentPlayHead)) {
-            debugText += " " + std::to_string(currentPlayHead.timeInSamples);
-            if (currentPlayHead.isPlaying && currentPlayHead.timeInSamples % int(getSampleRate() / 2) == 0) {
-                //midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), 0);
-                midiOut = !midiOut;
+            if (currentPlayHead.isPlaying) {
+                for (int i = 0; i <= buffer.getNumSamples(); i++) {
+                    debugText += " " + std::to_string(currentPlayHead.timeInSamples + i);
+                    if (nextBeat <= currentPlayHead.timeInSamples + i) {
+                        //midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), 0);
+                        midiOut = !midiOut;
+                        nextBeat += getSampleRate() / 4;
+                    }
+                }
             }
         }
     }
