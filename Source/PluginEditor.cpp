@@ -11,13 +11,16 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#define DOT_D 10
+#define TRACK_OFFSET 50
 
 //==============================================================================
 PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), drawDot(false)
 {
     setSize (200, 200);
+
+    tracks.push_back({ "Kick" });
+    tracks.push_back({ "Snare" });
 
     // these define the parameters of our slider object
     quantization.setSliderStyle(Slider::RotaryVerticalDrag);
@@ -49,15 +52,16 @@ void PatternsAudioProcessorEditor::paint (Graphics& g)
     g.setColour (Colours::deeppink);
     g.setFont (15.0f);
     g.drawFittedText("PATTERNS", 0, 0, getWidth(), 30, Justification::centred, 1);
-    g.drawFittedText(processor.debugText, 0, 30, getWidth(), 30, Justification::centred, 1);
+    //g.drawFittedText(processor.debugText, 0, 30, getWidth(), 30, Justification::centred, 1);
 
-    if (drawDot)
-        g.fillEllipse(0.5 * (getWidth() - DOT_D), 0.5 * (getHeight() - DOT_D), DOT_D, DOT_D);
+    for (int i = 0; i < tracks.size(); i++) {
+        tracks[i].paint(g, (i + 0.5) * TRACK_OFFSET, 30, TRACK_OFFSET);
+    }
 }
 
 void PatternsAudioProcessorEditor::resized()
 {
-    quantization.setBounds(0.1 * getWidth(), 40, 50, 70);
+    //quantization.setBounds(0.1 * getWidth(), 40, 50, 70);
 }
 
 void PatternsAudioProcessorEditor::timerCallback()

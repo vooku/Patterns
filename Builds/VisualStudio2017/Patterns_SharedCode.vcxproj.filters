@@ -2,9 +2,6 @@
 
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Patterns\Source">
-      <UniqueIdentifier>{7A99236A-153C-1F60-8E73-809DA8E53106}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Patterns">
       <UniqueIdentifier>{549DD4D7-B453-FC6D-FF5C-00F12512B8EE}</UniqueIdentifier>
     </Filter>
@@ -391,11 +388,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\DrumTrack.cpp">
+      <Filter>Patterns</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\PluginProcessor.cpp">
-      <Filter>Patterns\Source</Filter>
+      <Filter>Patterns</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\PluginEditor.cpp">
-      <Filter>Patterns\Source</Filter>
+      <Filter>Patterns</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\..\..\..\..\bin\JUCE-5.2.0\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
       <Filter>Juce Modules\juce_audio_basics\buffers</Filter>
@@ -2244,11 +2244,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\DrumTrack.h">
+      <Filter>Patterns</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\PluginProcessor.h">
-      <Filter>Patterns\Source</Filter>
+      <Filter>Patterns</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginEditor.h">
-      <Filter>Patterns\Source</Filter>
+      <Filter>Patterns</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\..\bin\JUCE-5.2.0\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h">
       <Filter>Juce Modules\juce_audio_basics\audio_play_head</Filter>

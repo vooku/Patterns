@@ -5,7 +5,7 @@
               bundleIdentifier="com.vooku.Patterns" includeBinaryInAppConfig="1"
               cppLanguageStandard="14" companyCopyright="vooku666" buildVST="1"
               buildVST3="1" buildAU="0" buildAUv3="0" buildRTAS="0" buildAAX="0"
-              buildStandalone="0" enableIAA="0" pluginName="Patterns" pluginDesc="Probability-based drum machine"
+              buildStandalone="1" enableIAA="0" pluginName="Patterns" pluginDesc="Probability-based drum machine"
               pluginManufacturer="vooku" pluginManufacturerCode="S666" pluginCode="1337"
               pluginChannelConfigs="" pluginIsSynth="0" pluginWantsMidiIn="0"
               pluginProducesMidiOut="1" pluginIsMidiEffectPlugin="1" pluginEditorRequiresKeys="0"
@@ -13,15 +13,15 @@
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0"
               companyName="vooku666" companyWebsite="https://github.com/vooku">
   <MAINGROUP id="JJaSeQ" name="Patterns">
-    <GROUP id="{C56BFCDD-7E76-6826-1A16-F47058015B31}" name="Source">
-      <FILE id="xtViqv" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="pfre5T" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
-      <FILE id="GoOBNz" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="UPWccz" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-    </GROUP>
+    <FILE id="JA0JR6" name="DrumTrack.cpp" compile="1" resource="0" file="Source/DrumTrack.cpp"/>
+    <FILE id="s08QC8" name="DrumTrack.h" compile="0" resource="0" file="Source/DrumTrack.h"/>
+    <FILE id="xtViqv" name="PluginProcessor.cpp" compile="1" resource="0"
+          file="Source/PluginProcessor.cpp"/>
+    <FILE id="pfre5T" name="PluginProcessor.h" compile="0" resource="0"
+          file="Source/PluginProcessor.h"/>
+    <FILE id="GoOBNz" name="PluginEditor.cpp" compile="1" resource="0"
+          file="Source/PluginEditor.cpp"/>
+    <FILE id="UPWccz" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2017 targetFolder="Builds/VisualStudio2017" vst3Folder="" windowsTargetPlatformVersion="10.0.16299.0">
