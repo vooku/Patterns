@@ -27,11 +27,18 @@ PatternsAudioProcessor::PatternsAudioProcessor()
       noteOff(0)
 #endif
 {
+    mTracks.push_back(new DrumTrack{ "Kick", 1.0f, 2, false });
+    mTracks.push_back(new DrumTrack{ "Snare", 0.7f, 4, true });
+    mTracks.push_back(new DrumTrack{ "Hi-Hat", 0.3f, 16, false });
+
     addParameter(quantization = new AudioParameterInt("quantization", "Quantization", 1, 32, 4));
 }
 
 PatternsAudioProcessor::~PatternsAudioProcessor()
 {
+    for (auto track : mTracks) {
+        delete track;
+    }
 }
 
 //==============================================================================

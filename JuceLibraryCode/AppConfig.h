@@ -22,6 +22,8 @@
 #define JucePlugin_Vst3Category Vst::PlugType::kInstrumentDrum
 #endif
 
+#define COLOR_HIGHLIGHT Colours::deeppink
+
 // [END_USER_CODE_SECTION]
 
 /*

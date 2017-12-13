@@ -12,6 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <string>
+#include "DrumTrack.h"
+#include <vector>
 
 //==============================================================================
 /**
@@ -19,6 +21,7 @@
 class PatternsAudioProcessor  : public AudioProcessor
 {
 public:
+    std::vector<DrumTrack*> mTracks;
     bool midiOut;
     AudioParameterInt* quantization;
     std::string debugText;
