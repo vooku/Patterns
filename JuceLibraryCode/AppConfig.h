@@ -23,6 +23,7 @@
 #endif
 
 #define COLOR_HIGHLIGHT Colours::deeppink
+#define COLOR_FRAME Colours::darkgrey
 
 // [END_USER_CODE_SECTION]
 

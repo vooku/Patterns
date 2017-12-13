@@ -31,7 +31,20 @@ PatternsAudioProcessor::PatternsAudioProcessor()
     mTracks.push_back(new DrumTrack{ "Snare", 0.7f, 4, true });
     mTracks.push_back(new DrumTrack{ "Hi-Hat", 0.3f, 16, false });
 
-    addParameter(quantization = new AudioParameterInt("quantization", "Quantization", 1, 32, 4));
+    for (int i = 0; i < mTracks.size(); i++) {
+        auto name = mTracks[i]->getName();
+        addParameter(mTracks[i]->mProbParam = new AudioParameterFloat("probability" + name,
+                                                                      "Probability " + name,
+                                                                       mTracks[i]->mProbSlider.getMinimum(),
+                                                                       mTracks[i]->mProbSlider.getMaximum(),
+                                                                       mTracks[i]->mProbSlider.getValue()));
+        addParameter(mTracks[i]->mQuantParam = new AudioParameterInt("quantization" + name,
+                                                                     "Quantization " + name,
+                                                                     mTracks[i]->mQuantSlider.getMinimum(),
+                                                                     mTracks[i]->mQuantSlider.getMaximum(),
+                                                                     mTracks[i]->mQuantSlider.getValue()));
+    }
+    
 }
 
 PatternsAudioProcessor::~PatternsAudioProcessor()
@@ -198,12 +211,12 @@ AudioProcessorEditor* PatternsAudioProcessor::createEditor()
 //==============================================================================
 void PatternsAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    MemoryOutputStream(destData, true).writeInt(*quantization);
+    //MemoryOutputStream(destData, true).writeInt(*quantization);
 }
 
 void PatternsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    *quantization = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readInt();
+    //*quantization = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readInt();
 }
 
 //==============================================================================

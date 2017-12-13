@@ -23,7 +23,7 @@ class PatternsAudioProcessor  : public AudioProcessor
 public:
     std::vector<DrumTrack*> mTracks;
     bool midiOut;
-    AudioParameterInt* quantization;
+    //AudioParameterInt* quantization;
     std::string debugText;
 
     //==============================================================================

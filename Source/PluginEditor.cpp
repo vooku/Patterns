@@ -20,11 +20,11 @@ PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcess
     setSize (200, 200);
 
     for (int i = 0; i < processor.mTracks.size(); i++) {
-        addAndMakeVisible(&processor.mTracks[i]->mProbability);
-        addAndMakeVisible(&processor.mTracks[i]->mQuantization);
+        addAndMakeVisible(&processor.mTracks[i]->mProbSlider);
+        addAndMakeVisible(&processor.mTracks[i]->mQuantSlider);
 
-        processor.mTracks[i]->mProbability.setPopupDisplayEnabled(true, true, this);
-        processor.mTracks[i]->mQuantization.setPopupDisplayEnabled(true, true, this);
+        processor.mTracks[i]->mProbSlider.setPopupDisplayEnabled(true, true, this);
+        processor.mTracks[i]->mQuantSlider.setPopupDisplayEnabled(true, true, this);
     }
 
     startTimer(33);
@@ -59,7 +59,9 @@ void PatternsAudioProcessorEditor::resized()
 
 void PatternsAudioProcessorEditor::timerCallback()
 {
-    repaint(); // TODO remove this ???
+    for (int i = 0; i < processor.mTracks.size(); i++) {
+        processor.mTracks[i]->update();
+    }
 
-    //quantization.setValue(*processor.quantization);
+    repaint(); // TODO remove this ???
 }
