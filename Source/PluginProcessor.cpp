@@ -22,8 +22,9 @@ PatternsAudioProcessor::PatternsAudioProcessor()
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        ),
-      midiOut(true),
-      nextBeat(0)
+      midiOut(false),
+      nextBeat(0),
+      noteOff(0)
 #endif
 {
     addParameter(quantization = new AudioParameterInt("quantization", "Quantization", 1, 32, 4));
@@ -137,9 +138,7 @@ bool PatternsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 #endif
 
 void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
-{
-    debugText = std::to_string(buffer.getNumSamples());
-    
+{ 
     buffer.clear();
     midiMessages.clear();
 
@@ -149,13 +148,29 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         if (ph->getCurrentPosition(currentPlayHead)) {
             if (currentPlayHead.isPlaying) {
                 for (int i = 0; i <= buffer.getNumSamples(); i++) {
-                    debugText += " " + std::to_string(currentPlayHead.timeInSamples + i);
+                    debugText = " " + std::to_string(currentPlayHead.timeInSamples + i);
+
+                    if (noteOff && noteOff <= currentPlayHead.timeInSamples + i) {
+                        midiMessages.addEvent(MidiMessage::noteOff(1, 36), i);
+
+                        midiOut = false;
+                        noteOff = 0;
+                    }
                     if (nextBeat <= currentPlayHead.timeInSamples + i) {
-                        //midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), 0);
-                        midiOut = !midiOut;
-                        nextBeat += getSampleRate() / 4;
+                        midiMessages.addEvent(MidiMessage::noteOn(1, 36, uint8(127)), i);
+                        
+                        midiOut = true;
+                        noteOff = nextBeat + getSampleRate() / 4;
+                        nextBeat += getSampleRate() / 2;
                     }
                 }
+            }
+            else {
+                midiMessages.addEvent(MidiMessage::noteOff(1, 36), 0);
+
+                midiOut = false;
+                noteOff = 0;
+                nextBeat = 0;
             }
         }
     }

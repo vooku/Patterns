@@ -62,6 +62,7 @@ public:
 
 private:
     juce::int64 nextBeat;
+    juce::int64 noteOff;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PatternsAudioProcessor)
