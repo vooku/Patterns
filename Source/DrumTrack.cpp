@@ -3,11 +3,11 @@
 #define DOT_D 10
 
 DrumTrack::DrumTrack()
-    : DrumTrack("", 36, 1.0f, 4, false)
+    : DrumTrack("", 36, 1.0f, 4)
 {
 }
 
-DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization, bool offset)
+DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization)
     : mName(name),
       mNote(note),
       mActive(false),
@@ -32,7 +32,11 @@ DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability
 
     mQuantSlider.addListener(this);
 
-    // offset button
+    mOffsetButton.setButtonText("Off Beat");
+    mOffsetButton.setColour(ToggleButton::tickColourId, COLOR_HIGHLIGHT);
+    mOffsetButton.setColour(ToggleButton::tickDisabledColourId, COLOR_HIGHLIGHT);
+
+    mOffsetButton.addListener(this);
 }
 
 void DrumTrack::paint(Graphics& g, int x, int y, int w) const
@@ -42,11 +46,11 @@ void DrumTrack::paint(Graphics& g, int x, int y, int w) const
 
     g.setColour(COLOR_FRAME);
     float ringD = 1.2f * DOT_D;
-    g.drawEllipse(x + 0.5 * (w - ringD), y + 35 - 0.5 * ringD, ringD, ringD, 2.0f);
+    g.drawEllipse(x + 0.5f * (w - ringD), y + 35 - 0.5f * ringD, ringD, ringD, 2.0f);
 
     if (mActive) {
         g.setColour(COLOR_HIGHLIGHT);
-        g.fillEllipse(x + 0.5 * (w - DOT_D), y + 35 - 0.5 * DOT_D, DOT_D, DOT_D);
+        g.fillEllipse(x + 0.5f * (w - DOT_D), y + 35 - 0.5f * DOT_D, DOT_D, DOT_D);
     }
 }
 
@@ -54,6 +58,7 @@ void DrumTrack::resized(int x, int y, int w)
 {
     mProbSlider.setBounds(x, y + 40, w, w);
     mQuantSlider.setBounds(x, y + 80, w, w);
+    mOffsetButton.setBounds(x, y + 130, w, 30);
 }
 
 void DrumTrack::update()
@@ -80,7 +85,7 @@ void DrumTrack::process(MidiBuffer & midiMessages, const juce::int64 & timeInSam
     }
 }
 
-void DrumTrack::stop(MidiBuffer & midiMessages)
+void DrumTrack::stop(MidiBuffer& midiMessages)
 {
     if (mActive) {
         midiMessages.addEvent(MidiMessage::noteOff(1, mNote), 0);
@@ -97,6 +102,16 @@ void DrumTrack::sliderValueChanged(Slider* slider)
 
     *mProbParam = mProbSlider.getValue();
     *mQuantParam = (int)mQuantSlider.getValue();
+}
+
+void DrumTrack::buttonClicked(Button* button)
+{
+    ignoreUnused(button);
+}
+
+void DrumTrack::buttonStateChanged(Button* button)
+{
+    ignoreUnused(button);
 }
 
 

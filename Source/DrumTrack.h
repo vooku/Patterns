@@ -3,7 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <string>
 
-class DrumTrack : private Slider::Listener
+class DrumTrack : private Slider::Listener, private Button::Listener
 {
 public:
     AudioParameterFloat* mProbParam;
@@ -11,10 +11,10 @@ public:
 
     Slider mProbSlider;
     Slider mQuantSlider;
-    ToggleButton mOffset;
+    ToggleButton mOffsetButton;
 
     DrumTrack();
-    DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization, bool offset);
+    DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization);
 
     const std::string& getName() const { return mName; }
 
@@ -28,6 +28,8 @@ public:
 
 private:
     void sliderValueChanged(Slider* slider) override;
+    void buttonClicked(Button* button) override;
+    void buttonStateChanged(Button* button) override;
 
     // TODO icon
     std::string mName;

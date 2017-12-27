@@ -7,7 +7,7 @@
               buildVST3="1" buildAU="0" buildAUv3="0" buildRTAS="0" buildAAX="0"
               buildStandalone="1" enableIAA="0" pluginName="Patterns" pluginDesc="Probability-based drum machine"
               pluginManufacturer="vooku" pluginManufacturerCode="S666" pluginCode="1337"
-              pluginChannelConfigs="" pluginIsSynth="0" pluginWantsMidiIn="0"
+              pluginChannelConfigs="" pluginIsSynth="0" pluginWantsMidiIn="1"
               pluginProducesMidiOut="1" pluginIsMidiEffectPlugin="1" pluginEditorRequiresKeys="0"
               pluginAUExportPrefix="PatternsAU" pluginRTASCategory="" aaxIdentifier="com.vooku.Patterns"
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.2.0"

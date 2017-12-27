@@ -27,9 +27,9 @@ PatternsAudioProcessor::PatternsAudioProcessor()
       mDistribution(0.0f, 1.0f),
       debugText("PATTERNS")
 {
-    mTracks.push_back(new DrumTrack{ "Kick", 36, 1.0f, 2, false });
-    mTracks.push_back(new DrumTrack{ "Snare", 38, 0.7f, 1, true });
-    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, 0.3f, 8, false });
+    mTracks.push_back(new DrumTrack{ "Kick", 36, 1.0f, 2 });
+    mTracks.push_back(new DrumTrack{ "Snare", 38, 0.7f, 1 });
+    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, 0.3f, 8 });
 
     for (int i = 0; i < mTracks.size(); i++) {
         auto name = mTracks[i]->getName();
@@ -160,7 +160,7 @@ bool PatternsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 { 
     buffer.clear();
-    midiMessages.clear();
+    //midiMessages.clear();
 
     if (AudioPlayHead* ph = getPlayHead()) {
         AudioPlayHead::CurrentPositionInfo currentPlayHead;
