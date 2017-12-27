@@ -40,9 +40,7 @@ private:
 
     double mSampleRate;
 
-
     juce::int64 mLastOn;
-    juce::int64 mNextOff;
 
     juce::int8 mNote;
 };

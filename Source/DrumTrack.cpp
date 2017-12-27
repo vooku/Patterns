@@ -11,8 +11,7 @@ DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability
     : mName(name),
       mNote(note),
       mActive(false),
-      mLastOn(0),
-      mNextOff(0)
+      mLastOn(-1)
 {
     mProbSlider.setSliderStyle(Slider::RotaryVerticalDrag);
     mProbSlider.setRange(0.0, 1.0, 0.01);
@@ -78,14 +77,13 @@ void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPo
     auto beatLen = (4 * 60 * mSampleRate * currentPlayHead.timeSigNumerator)
                  / (*mQuantParam * currentPlayHead.timeSigDenominator * currentPlayHead.bpm);
     auto elapsed = currentPlayHead.timeInSamples + sampleOffset - mLastOn;
-    auto beatOffset = (mOffsetButton.getToggleState() ? 0.5 : 0) * beatLen;
 
     if (mActive && elapsed >= 0.5 * beatLen) {
         midiMessages.addEvent(MidiMessage::noteOff(1, mNote), sampleOffset);
         mActive = false;
     }
 
-    if (elapsed >= beatLen) {
+    if (mLastOn == -1 || elapsed >= beatLen) {
         if (*mProbParam >= randomNumber) {
             midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(127)), sampleOffset);
             mActive = true;
@@ -103,8 +101,7 @@ void DrumTrack::stop(MidiBuffer& midiMessages)
     }
 
     mActive = false;
-    mLastOn = 0;
-    mNextOff = 0;
+    mLastOn = -1;
 }
 
 void DrumTrack::sliderValueChanged(Slider* slider)

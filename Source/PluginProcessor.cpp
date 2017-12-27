@@ -33,13 +33,13 @@ PatternsAudioProcessor::PatternsAudioProcessor()
 
     for (int i = 0; i < mTracks.size(); i++) {
         auto name = mTracks[i]->getName();
-        addParameter(mTracks[i]->mProbParam = new AudioParameterFloat("probability" + name,
-                                                                      "Probability " + name,
-                                                                       mTracks[i]->mProbSlider.getMinimum(),
-                                                                       mTracks[i]->mProbSlider.getMaximum(),
-                                                                       mTracks[i]->mProbSlider.getValue()));
-        addParameter(mTracks[i]->mQuantParam = new AudioParameterInt("quantization" + name,
-                                                                     "Quantization " + name,
+        addParameter(mTracks[i]->mProbParam = new AudioParameterFloat(name + " probability",
+                                                                      name + " Probability",
+                                                                      mTracks[i]->mProbSlider.getMinimum(),
+                                                                      mTracks[i]->mProbSlider.getMaximum(),
+                                                                      mTracks[i]->mProbSlider.getValue()));
+        addParameter(mTracks[i]->mQuantParam = new AudioParameterInt(name + " quantization",
+                                                                     name + " Quantization",
                                                                      mTracks[i]->mQuantSlider.getMinimum(),
                                                                      mTracks[i]->mQuantSlider.getMaximum(),
                                                                      mTracks[i]->mQuantSlider.getValue()));
@@ -168,7 +168,7 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         
         if (ph->getCurrentPosition(currentPlayHead)) {
             if (currentPlayHead.isPlaying) {
-                debugText = std::to_string(currentPlayHead.bpm);
+                debugText = std::to_string(currentPlayHead.ppqPosition);
                 for (int i = 0; i <= buffer.getNumSamples(); i++) {
                     for (auto& track : mTracks) {
                         track->process(midiMessages,
