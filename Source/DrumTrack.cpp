@@ -67,30 +67,23 @@ void DrumTrack::update()
     mQuantSlider.setValue(*mQuantParam);
 }
 
-void DrumTrack::prepareToPlay(const double& sampleRate)
+void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, float randomNumber)
 {
-    mSampleRate = sampleRate;
-}
-
-void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, int sampleOffset, float randomNumber)
-{
-    auto beatLen = (4 * 60 * mSampleRate * currentPlayHead.timeSigNumerator)
-                 / (*mQuantParam * currentPlayHead.timeSigDenominator * currentPlayHead.bpm);
-    auto elapsed = currentPlayHead.timeInSamples + sampleOffset - mLastOn;
+    double beatLen = (4.0 * currentPlayHead.timeSigNumerator) / (*mQuantParam * currentPlayHead.timeSigDenominator);
+    auto elapsed = currentPlayHead.ppqPosition - mLastOn;
 
     if (mActive && elapsed >= 0.5 * beatLen) {
-        midiMessages.addEvent(MidiMessage::noteOff(1, mNote), sampleOffset);
+        midiMessages.addEvent(MidiMessage::noteOff(1, mNote), 0);
         mActive = false;
     }
 
     if (mLastOn == -1 || elapsed >= beatLen) {
         if (*mProbParam >= randomNumber) {
-            midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(127)), sampleOffset);
+            midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(127)), 0);
             mActive = true;
         }
         
-        mLastOn = currentPlayHead.timeInSamples + sampleOffset;
-        //mNextOff = timeInSamples + sampleOffset + 0.5 * beatLen;
+        mLastOn = currentPlayHead.ppqPosition;
     }
 }
 

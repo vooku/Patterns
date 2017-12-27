@@ -24,7 +24,7 @@ public:
     void resized(int x, int y, int w);
     void update();
     void prepareToPlay(const double& sampleRate);
-    void process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, int sampleOffset, float randomNumber);
+    void process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, float randomNumber);
     void stop(MidiBuffer& midiMessages);
 
 private:
@@ -38,9 +38,7 @@ private:
     
     // TODO midi message
 
-    double mSampleRate;
-
-    juce::int64 mLastOn;
+    double mLastOn;
 
     juce::int8 mNote;
 };

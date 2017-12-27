@@ -122,11 +122,7 @@ void PatternsAudioProcessor::changeProgramName (int index, const String& newName
 //==============================================================================
 void PatternsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    ignoreUnused(samplesPerBlock);
-
-    for (auto& track : mTracks) {
-        track->prepareToPlay(sampleRate);
-    }
+    ignoreUnused(sampleRate, samplesPerBlock);
 }
 
 void PatternsAudioProcessor::releaseResources()
@@ -167,19 +163,12 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         AudioPlayHead::CurrentPositionInfo currentPlayHead;
         
         if (ph->getCurrentPosition(currentPlayHead)) {
-            if (currentPlayHead.isPlaying) {
-                debugText = std::to_string(currentPlayHead.ppqPosition);
-                for (int i = 0; i <= buffer.getNumSamples(); i++) {
-                    for (auto& track : mTracks) {
-                        track->process(midiMessages,
-                                       currentPlayHead,
-                                       i,
-                                       mDistribution(mEngine));
-                    }
+            debugText = std::to_string(currentPlayHead.ppqPosition);
+            for (auto& track : mTracks) {
+                if (currentPlayHead.isPlaying) {
+                    track->process(midiMessages, currentPlayHead, mDistribution(mEngine));
                 }
-            }
-            else {
-                for (auto& track : mTracks) {
+                else {
                     track->stop(midiMessages);
                 }
             }
