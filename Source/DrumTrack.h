@@ -14,7 +14,7 @@ public:
     ToggleButton mOffsetButton;
 
     DrumTrack();
-    DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization);
+    DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization, bool offset);
 
     const std::string& getName() const { return mName; }
 
@@ -23,7 +23,8 @@ public:
     void paint(Graphics& g, int x, int y, int w) const;
     void resized(int x, int y, int w);
     void update();
-    void process(MidiBuffer& midiMessages, const juce::int64& timeInSamples, int sampleOffset, const juce::int64& sampleRate, float randomNumber);
+    void prepareToPlay(const double& sampleRate);
+    void process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, int sampleOffset, float randomNumber);
     void stop(MidiBuffer& midiMessages);
 
 private:
@@ -35,10 +36,12 @@ private:
     std::string mName;
     bool mActive;
     
-    // TODO offset
     // TODO midi message
 
-    juce::int64 mNextOn;
+    double mSampleRate;
+
+
+    juce::int64 mLastOn;
     juce::int64 mNextOff;
 
     juce::int8 mNote;

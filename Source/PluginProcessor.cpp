@@ -27,9 +27,9 @@ PatternsAudioProcessor::PatternsAudioProcessor()
       mDistribution(0.0f, 1.0f),
       debugText("PATTERNS")
 {
-    mTracks.push_back(new DrumTrack{ "Kick", 36, 1.0f, 2 });
-    mTracks.push_back(new DrumTrack{ "Snare", 38, 0.7f, 1 });
-    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, 0.3f, 8 });
+    mTracks.push_back(new DrumTrack{ "Kick", 36, 1.0f, 2, false });
+    mTracks.push_back(new DrumTrack{ "Snare", 38, 1.0f, 2, true });
+    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, 0.0f, 8, false });
 
     for (int i = 0; i < mTracks.size(); i++) {
         auto name = mTracks[i]->getName();
@@ -122,9 +122,11 @@ void PatternsAudioProcessor::changeProgramName (int index, const String& newName
 //==============================================================================
 void PatternsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-    ignoreUnused(sampleRate, samplesPerBlock);
+    ignoreUnused(samplesPerBlock);
+
+    for (auto& track : mTracks) {
+        track->prepareToPlay(sampleRate);
+    }
 }
 
 void PatternsAudioProcessor::releaseResources()
@@ -160,21 +162,18 @@ bool PatternsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 { 
     buffer.clear();
-    //midiMessages.clear();
-
+    
     if (AudioPlayHead* ph = getPlayHead()) {
         AudioPlayHead::CurrentPositionInfo currentPlayHead;
         
         if (ph->getCurrentPosition(currentPlayHead)) {
             if (currentPlayHead.isPlaying) {
+                debugText = std::to_string(currentPlayHead.bpm);
                 for (int i = 0; i <= buffer.getNumSamples(); i++) {
-                    //debugText = std::to_string(currentPlayHead.timeInSamples + i);
-
                     for (auto& track : mTracks) {
                         track->process(midiMessages,
-                                       currentPlayHead.timeInSamples,
+                                       currentPlayHead,
                                        i,
-                                       getSampleRate(),
                                        mDistribution(mEngine));
                     }
                 }

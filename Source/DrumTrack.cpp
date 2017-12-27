@@ -3,15 +3,15 @@
 #define DOT_D 10
 
 DrumTrack::DrumTrack()
-    : DrumTrack("", 36, 1.0f, 4)
+    : DrumTrack("", 36, 1.0f, 4, false)
 {
 }
 
-DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization)
+DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization, bool offset)
     : mName(name),
       mNote(note),
       mActive(false),
-      mNextOn(0),
+      mLastOn(0),
       mNextOff(0)
 {
     mProbSlider.setSliderStyle(Slider::RotaryVerticalDrag);
@@ -35,6 +35,7 @@ DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability
     mOffsetButton.setButtonText("Off Beat");
     mOffsetButton.setColour(ToggleButton::tickColourId, COLOR_HIGHLIGHT);
     mOffsetButton.setColour(ToggleButton::tickDisabledColourId, COLOR_HIGHLIGHT);
+    mOffsetButton.setToggleState(offset, false);
 
     mOffsetButton.addListener(this);
 }
@@ -67,21 +68,31 @@ void DrumTrack::update()
     mQuantSlider.setValue(*mQuantParam);
 }
 
-void DrumTrack::process(MidiBuffer & midiMessages, const juce::int64 & timeInSamples, int sampleOffset, const juce::int64& sampleRate, float randomNumber)
+void DrumTrack::prepareToPlay(const double& sampleRate)
 {
-    if (mActive && mNextOff <= timeInSamples + sampleOffset) {
-        midiMessages.addEvent(MidiMessage::noteOff(1, mNote), sampleOffset);
+    mSampleRate = sampleRate;
+}
 
+void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, int sampleOffset, float randomNumber)
+{
+    auto beatLen = (4 * 60 * mSampleRate * currentPlayHead.timeSigNumerator)
+                 / (*mQuantParam * currentPlayHead.timeSigDenominator * currentPlayHead.bpm);
+    auto elapsed = currentPlayHead.timeInSamples + sampleOffset - mLastOn;
+    auto beatOffset = (mOffsetButton.getToggleState() ? 0.5 : 0) * beatLen;
+
+    if (mActive && elapsed >= 0.5 * beatLen) {
+        midiMessages.addEvent(MidiMessage::noteOff(1, mNote), sampleOffset);
         mActive = false;
     }
-    if (mNextOn <= timeInSamples + sampleOffset) {
+
+    if (elapsed >= beatLen) {
         if (*mProbParam >= randomNumber) {
             midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(127)), sampleOffset);
-            mNextOff = mNextOn + sampleRate / (*mQuantParam * 2);
             mActive = true;
         }
         
-        mNextOn += sampleRate / *mQuantParam;
+        mLastOn = currentPlayHead.timeInSamples + sampleOffset;
+        //mNextOff = timeInSamples + sampleOffset + 0.5 * beatLen;
     }
 }
 
@@ -92,7 +103,7 @@ void DrumTrack::stop(MidiBuffer& midiMessages)
     }
 
     mActive = false;
-    mNextOn = 0;
+    mLastOn = 0;
     mNextOff = 0;
 }
 
