@@ -33,6 +33,9 @@ PatternsAudioProcessor::PatternsAudioProcessor()
 
     for (int i = 0; i < mTracks.size(); i++) {
         auto name = mTracks[i]->getName();
+        addParameter(mTracks[i]->mMuteParam = new AudioParameterBool(name + " mute",
+                                                                     name + " Mute",
+                                                                     mTracks[i]->mMuteButton.getToggleState()));
         addParameter(mTracks[i]->mProbParam = new AudioParameterFloat(name + " probability",
                                                                       name + " Probability",
                                                                       mTracks[i]->mProbSlider.getMinimum(),
@@ -48,6 +51,10 @@ PatternsAudioProcessor::PatternsAudioProcessor()
                                                                    mTracks[i]->mVelSlider.getMinimum(),
                                                                    mTracks[i]->mVelSlider.getMaximum(),
                                                                    mTracks[i]->mVelSlider.getValue()));
+        addParameter(mTracks[i]->mOffBeatParam = new AudioParameterBool(name + " Off Beat",
+                                                                       name + " Off Beat",
+                                                                       mTracks[i]->mOffBeatButton.getToggleState()));
+        
     }
     
 }

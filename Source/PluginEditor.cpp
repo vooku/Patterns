@@ -24,7 +24,7 @@ PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcess
         addAndMakeVisible(&processor.mTracks[i]->mProbSlider);
         addAndMakeVisible(&processor.mTracks[i]->mQuantSlider);
         addAndMakeVisible(&processor.mTracks[i]->mVelSlider);
-        addAndMakeVisible(&processor.mTracks[i]->mOffsetButton);
+        addAndMakeVisible(&processor.mTracks[i]->mOffBeatButton);
         addAndMakeVisible(&processor.mTracks[i]->mNoteEditor);
 
         processor.mTracks[i]->mProbSlider.setPopupDisplayEnabled(true, true, this);

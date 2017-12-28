@@ -54,12 +54,12 @@ DrumTrack::DrumTrack(const std::string& name,
     mVelSlider.setColour(Slider::thumbColourId, COLOR_HIGHLIGHT);
     mVelSlider.addListener(this);
 
-    mOffsetButton.setButtonText("Off Beat");
-    mOffsetButton.setColour(TextButton::buttonOnColourId, COLOR_HIGHLIGHT);
-    mOffsetButton.setColour(TextButton::textColourOffId, COLOR_HIGHLIGHT);
-    mOffsetButton.setToggleState(offset, false);
+    mOffBeatButton.setButtonText("Off Beat");
+    mOffBeatButton.setColour(TextButton::buttonOnColourId, COLOR_HIGHLIGHT);
+    mOffBeatButton.setColour(TextButton::textColourOffId, COLOR_HIGHLIGHT);
+    mOffBeatButton.setToggleState(offset, false);
 
-    mOffsetButton.addListener(this);
+    mOffBeatButton.addListener(this);
 
     mNoteEditor.setText("Note");
 
@@ -87,15 +87,17 @@ void DrumTrack::resized(int x, int y, int w)
     mProbSlider.setBounds(x, y + 70, w, w);
     mQuantSlider.setBounds(x, y + 110, w, w);
     mVelSlider.setBounds(x, y + 150, w, w);
-    mOffsetButton.setBounds(x + int(0.1 * w), y + 200, 0.8 * w, 30);
+    mOffBeatButton.setBounds(x + int(0.1 * w), y + 200, 0.8 * w, 30);
     mNoteEditor.setBounds(x + int(0.1 * w), y + 240, 0.8 * w, 25);
 }
 
 void DrumTrack::update()
 {
+    mMuteButton.setToggleState(*mMuteParam, false);
     mProbSlider.setValue(*mProbParam);
     mQuantSlider.setValue(*mQuantParam);
     mVelSlider.setValue(*mVelParam);
+    mOffBeatButton.setToggleState(*mOffBeatParam, false);
 }
 
 void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, float randomNumber)
@@ -121,21 +123,21 @@ void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPo
     };
     
     if (beatPos >= 0.5 * beatLen) {
-        if (!mActive && mOffsetButton.getToggleState() && !mOffBeatHit) {
+        if (!mActive && mOffBeatButton.getToggleState() && !mOffBeatHit) {
             sendOn();
             mOffBeatHit = true;
         }
-        if (mActive && !mOffsetButton.getToggleState()) {
+        if (mActive && !mOffBeatButton.getToggleState()) {
             sendOff();
         }
     }
     if (beatPos < mLastPos) {
         mOffBeatHit = false;
 
-        if (mActive && mOffsetButton.getToggleState()) {
+        if (mActive && mOffBeatButton.getToggleState()) {
             sendOff();
         }
-        if (!mActive && !mOffsetButton.getToggleState()) {
+        if (!mActive && !mOffBeatButton.getToggleState()) {
             sendOn();
         }
     }
@@ -165,6 +167,9 @@ void DrumTrack::sliderValueChanged(Slider* slider)
 void DrumTrack::buttonClicked(Button* button)
 {
     button->setToggleState(!button->getToggleState(), false);
+
+    *mMuteParam = mMuteButton.getToggleState();
+    *mOffBeatParam = mOffBeatButton.getToggleState();
 }
 
 void DrumTrack::buttonStateChanged(Button* button)

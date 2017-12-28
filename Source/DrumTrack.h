@@ -9,13 +9,14 @@ public:
     AudioParameterFloat* mProbParam;
     AudioParameterInt* mQuantParam;
     AudioParameterInt* mVelParam;
-    AudioParameterBool* mOffsetParam; // TODO
-    AudioParameterBool* mMuteParam; // TODO
+    AudioParameterBool* mMuteParam;
+    AudioParameterBool* mOffBeatParam;
+    
 
     Slider mProbSlider;
     Slider mQuantSlider;
     Slider mVelSlider;
-    TextButton mOffsetButton;
+    TextButton mOffBeatButton;
     TextButton mMuteButton;
     TextEditor mNoteEditor;
     
