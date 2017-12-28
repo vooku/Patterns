@@ -38,7 +38,7 @@ private:
     
     // TODO midi message
 
-    double mLastOn;
+    double mLastPos;
 
     juce::int8 mNote;
 };

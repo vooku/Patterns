@@ -1,6 +1,7 @@
 #include "DrumTrack.h"
 
 #define DOT_D 10
+#define frac(x) (x - floor(x))
 
 DrumTrack::DrumTrack()
     : DrumTrack("", 36, 1.0f, 4, false)
@@ -11,7 +12,7 @@ DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability
     : mName(name),
       mNote(note),
       mActive(false),
-      mLastOn(-1)
+      mLastPos(1)
 {
     mProbSlider.setSliderStyle(Slider::RotaryVerticalDrag);
     mProbSlider.setRange(0.0, 1.0, 0.01);
@@ -69,22 +70,21 @@ void DrumTrack::update()
 
 void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, float randomNumber)
 {
-    double beatLen = (4.0 * currentPlayHead.timeSigNumerator) / (*mQuantParam * currentPlayHead.timeSigDenominator);
-    auto elapsed = currentPlayHead.ppqPosition - mLastOn;
-
-    if (mActive && elapsed >= 0.5 * beatLen) {
+    double beatLen = (currentPlayHead.timeSigNumerator * 4.0) / (currentPlayHead.timeSigDenominator * *mQuantParam);
+    double beatPos = fmod(fmod(currentPlayHead.ppqPosition, currentPlayHead.timeSigNumerator), beatLen);
+    
+    if (mActive && beatPos > beatLen / 2.0) {
         midiMessages.addEvent(MidiMessage::noteOff(1, mNote), 0);
         mActive = false;
     }
-
-    if (mLastOn == -1 || elapsed >= beatLen) {
+    if (beatPos < mLastPos) {
         if (*mProbParam >= randomNumber) {
             midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(127)), 0);
             mActive = true;
         }
-        
-        mLastOn = currentPlayHead.ppqPosition;
     }
+
+    mLastPos = beatPos;
 }
 
 void DrumTrack::stop(MidiBuffer& midiMessages)
@@ -94,7 +94,7 @@ void DrumTrack::stop(MidiBuffer& midiMessages)
     }
 
     mActive = false;
-    mLastOn = -1;
+    mLastPos = 1;
 }
 
 void DrumTrack::sliderValueChanged(Slider* slider)
