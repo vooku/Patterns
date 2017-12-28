@@ -25,11 +25,11 @@ PatternsAudioProcessor::PatternsAudioProcessor()
 #endif
       mEngine(mRandomDevice()),
       mDistribution(0.0f, 1.0f),
-      debugText("PATTERNS")
+      debugText("PATTERNS"), lastppq(0)
 {
-    mTracks.push_back(new DrumTrack{ "Kick", 36, false, 1.0f, 2, false });
-    mTracks.push_back(new DrumTrack{ "Snare", 38, false, 1.0f, 4, true });
-    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, true, 0.3f, 8, false });
+    mTracks.push_back(new DrumTrack{ "Kick", 36, false, 1.0f, 2, 127, false });
+    mTracks.push_back(new DrumTrack{ "Snare", 38, false, 1.0f, 4, 127, true });
+    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, true, 0.3f, 8, 127, false });
 
     for (int i = 0; i < mTracks.size(); i++) {
         auto name = mTracks[i]->getName();
@@ -43,6 +43,11 @@ PatternsAudioProcessor::PatternsAudioProcessor()
                                                                      mTracks[i]->mQuantSlider.getMinimum(),
                                                                      mTracks[i]->mQuantSlider.getMaximum(),
                                                                      mTracks[i]->mQuantSlider.getValue()));
+        addParameter(mTracks[i]->mVelParam = new AudioParameterInt(name + " velocity",
+                                                                   name + " Velocity",
+                                                                   mTracks[i]->mVelSlider.getMinimum(),
+                                                                   mTracks[i]->mVelSlider.getMaximum(),
+                                                                   mTracks[i]->mVelSlider.getValue()));
     }
     
 }
@@ -163,7 +168,7 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         AudioPlayHead::CurrentPositionInfo currentPlayHead;
         
         if (ph->getCurrentPosition(currentPlayHead)) {
-            debugText = std::to_string(currentPlayHead.ppqPosition);
+            debugText = std::to_string(currentPlayHead.ppqPosition - lastppq); lastppq = currentPlayHead.ppqPosition;
             for (auto& track : mTracks) {
                 if (currentPlayHead.isPlaying) {
                     track->process(midiMessages, currentPlayHead, mDistribution(mEngine));

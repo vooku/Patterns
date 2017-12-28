@@ -66,7 +66,7 @@ private:
     std::random_device mRandomDevice;
     std::mt19937_64 mEngine;
     std::uniform_real_distribution<float> mDistribution;
-
+    double lastppq;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PatternsAudioProcessor)
 };

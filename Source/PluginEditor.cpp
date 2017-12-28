@@ -17,16 +17,19 @@
 PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-    setSize (200, 250);
+    setSize (200, 300);
 
     for (int i = 0; i < processor.mTracks.size(); i++) {
         addAndMakeVisible(&processor.mTracks[i]->mMuteButton);
         addAndMakeVisible(&processor.mTracks[i]->mProbSlider);
         addAndMakeVisible(&processor.mTracks[i]->mQuantSlider);
+        addAndMakeVisible(&processor.mTracks[i]->mVelSlider);
         addAndMakeVisible(&processor.mTracks[i]->mOffsetButton);
+        addAndMakeVisible(&processor.mTracks[i]->mNoteEditor);
 
         processor.mTracks[i]->mProbSlider.setPopupDisplayEnabled(true, true, this);
         processor.mTracks[i]->mQuantSlider.setPopupDisplayEnabled(true, true, this);
+        processor.mTracks[i]->mVelSlider.setPopupDisplayEnabled(true, true, this);
     }
 
     startTimer(33);
@@ -39,12 +42,10 @@ PatternsAudioProcessorEditor::~PatternsAudioProcessorEditor()
 //==============================================================================
 void PatternsAudioProcessorEditor::paint (Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
 
     g.setColour (COLOR_HIGHLIGHT);
     g.setFont (15.0f);
-    //g.drawFittedText("PATTERNS", 0, 0, getWidth(), 30, Justification::centred, 1);
     g.drawFittedText(processor.debugText, 0, 0, getWidth(), 30, Justification::centred, 1);
 
     for (int i = 0; i < processor.mTracks.size(); i++) {

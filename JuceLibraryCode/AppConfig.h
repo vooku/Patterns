@@ -19,7 +19,7 @@
 // (You can add your own code in this section, and the Projucer will not overwrite it)
 
 #ifndef  JucePlugin_Vst3Category
-#define JucePlugin_Vst3Category Vst::PlugType::kInstrumentDrum
+#define JucePlugin_Vst3Category Vst::PlugType::kFxInstrument
 #endif
 
 #define COLOR_HIGHLIGHT Colours::deeppink

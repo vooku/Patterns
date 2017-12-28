@@ -4,11 +4,17 @@
 #define frac(x) (x - floor(x))
 
 DrumTrack::DrumTrack()
-    : DrumTrack("", 36, false, 1.0f, 4, false)
+    : DrumTrack("", 36, false, 1.0f, 4, 127, false)
 {
 }
 
-DrumTrack::DrumTrack(const std::string& name, juce::int8 note, bool mute, float probability, int quantization, bool offset)
+DrumTrack::DrumTrack(const std::string& name,
+                     juce::int8 note,
+                     bool mute,
+                     float probability,
+                     int quantization,
+                     int velocity,
+                     bool offset)
     : mName(name),
       mNote(note),
       mActive(false),
@@ -40,12 +46,24 @@ DrumTrack::DrumTrack(const std::string& name, juce::int8 note, bool mute, float 
 
     mQuantSlider.addListener(this);
 
+    mVelSlider.setSliderStyle(Slider::RotaryVerticalDrag);
+    mVelSlider.setRange(0.0, 127.0, 1.0);
+    mVelSlider.setTextBoxStyle(Slider::NoTextBox, false, 90, 30);
+    mVelSlider.setTextValueSuffix(" Velocity");
+    mVelSlider.setValue(velocity);
+    mVelSlider.setColour(Slider::thumbColourId, COLOR_HIGHLIGHT);
+    mVelSlider.addListener(this);
+
     mOffsetButton.setButtonText("Off Beat");
     mOffsetButton.setColour(TextButton::buttonOnColourId, COLOR_HIGHLIGHT);
     mOffsetButton.setColour(TextButton::textColourOffId, COLOR_HIGHLIGHT);
     mOffsetButton.setToggleState(offset, false);
 
     mOffsetButton.addListener(this);
+
+    mNoteEditor.setText("Note");
+
+    mNoteEditor.addListener(this);
 }
 
 void DrumTrack::paint(Graphics& g, int x, int y, int w) const
@@ -68,13 +86,16 @@ void DrumTrack::resized(int x, int y, int w)
     mMuteButton.setBounds(x + int(0.1 * w), y + 50, 0.8 * w, 20);
     mProbSlider.setBounds(x, y + 70, w, w);
     mQuantSlider.setBounds(x, y + 110, w, w);
-    mOffsetButton.setBounds(x + int(0.1 * w), y + 160, 0.8 * w, 30);
+    mVelSlider.setBounds(x, y + 150, w, w);
+    mOffsetButton.setBounds(x + int(0.1 * w), y + 200, 0.8 * w, 30);
+    mNoteEditor.setBounds(x + int(0.1 * w), y + 240, 0.8 * w, 25);
 }
 
 void DrumTrack::update()
 {
     mProbSlider.setValue(*mProbParam);
     mQuantSlider.setValue(*mQuantParam);
+    mVelSlider.setValue(*mVelParam);
 }
 
 void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, float randomNumber)
@@ -89,7 +110,7 @@ void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPo
     
     auto sendOn = [&]() {
         if (*mProbParam >= randomNumber) {
-            midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(127)), 0);
+            midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(*mVelParam)), 0);
             mActive = true;
         }
     };
@@ -138,6 +159,7 @@ void DrumTrack::sliderValueChanged(Slider* slider)
 
     *mProbParam = (float)mProbSlider.getValue();
     *mQuantParam = (int)mQuantSlider.getValue();
+    *mVelParam = (int)mVelSlider.getValue();
 }
 
 void DrumTrack::buttonClicked(Button* button)
@@ -148,6 +170,11 @@ void DrumTrack::buttonClicked(Button* button)
 void DrumTrack::buttonStateChanged(Button* button)
 {
     ignoreUnused(button);
+}
+
+void DrumTrack::textEditorTextChanged(TextEditor& textEditor)
+{
+    //if (textEditor.)
 }
 
 
