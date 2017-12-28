@@ -38,6 +38,7 @@ private:
     // TODO icon
     std::string mName;
     bool mActive;
+    bool mOffBeatHit;
     
     // TODO midi message
 

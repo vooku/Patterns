@@ -12,6 +12,7 @@ DrumTrack::DrumTrack(const std::string& name, juce::int8 note, bool mute, float 
     : mName(name),
       mNote(note),
       mActive(false),
+      mOffBeatHit(false),
       mLastPos(1)
 {
     mMuteButton.setButtonText("Mute");
@@ -64,10 +65,10 @@ void DrumTrack::paint(Graphics& g, int x, int y, int w) const
 
 void DrumTrack::resized(int x, int y, int w)
 {
-    mMuteButton.setBounds(x + 0.1 * w, y + 50, 0.8 * w, 20);
+    mMuteButton.setBounds(x + int(0.1 * w), y + 50, 0.8 * w, 20);
     mProbSlider.setBounds(x, y + 70, w, w);
     mQuantSlider.setBounds(x, y + 110, w, w);
-    mOffsetButton.setBounds(x + 0.1 * w, y + 160, 0.8 * w, 30);
+    mOffsetButton.setBounds(x + int(0.1 * w), y + 160, 0.8 * w, 30);
 }
 
 void DrumTrack::update()
@@ -86,17 +87,38 @@ void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPo
     double beatLen = (currentPlayHead.timeSigNumerator * 4.0) / (currentPlayHead.timeSigDenominator * *mQuantParam);
     double beatPos = fmod(fmod(currentPlayHead.ppqPosition, currentPlayHead.timeSigNumerator), beatLen);
     
-    if (mActive && beatPos > beatLen / 2.0) {
-        midiMessages.addEvent(MidiMessage::noteOff(1, mNote), 0);
-        mActive = false;
-    }
-    if (beatPos < mLastPos) {
+    auto sendOn = [&]() {
         if (*mProbParam >= randomNumber) {
             midiMessages.addEvent(MidiMessage::noteOn(1, mNote, uint8(127)), 0);
             mActive = true;
         }
-    }
+    };
 
+    auto sendOff = [&]() {
+        midiMessages.addEvent(MidiMessage::noteOff(1, mNote), 0);
+        mActive = false;
+    };
+    
+    if (beatPos >= 0.5 * beatLen) {
+        if (!mActive && mOffsetButton.getToggleState() && !mOffBeatHit) {
+            sendOn();
+            mOffBeatHit = true;
+        }
+        if (mActive && !mOffsetButton.getToggleState()) {
+            sendOff();
+        }
+    }
+    if (beatPos < mLastPos) {
+        mOffBeatHit = false;
+
+        if (mActive && mOffsetButton.getToggleState()) {
+            sendOff();
+        }
+        if (!mActive && !mOffsetButton.getToggleState()) {
+            sendOn();
+        }
+    }
+    
     mLastPos = beatPos;
 }
 
@@ -114,7 +136,7 @@ void DrumTrack::sliderValueChanged(Slider* slider)
 {
     ignoreUnused(slider);
 
-    *mProbParam = mProbSlider.getValue();
+    *mProbParam = (float)mProbSlider.getValue();
     *mQuantParam = (int)mQuantSlider.getValue();
 }
 

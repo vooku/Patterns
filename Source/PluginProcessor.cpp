@@ -28,8 +28,8 @@ PatternsAudioProcessor::PatternsAudioProcessor()
       debugText("PATTERNS")
 {
     mTracks.push_back(new DrumTrack{ "Kick", 36, false, 1.0f, 2, false });
-    mTracks.push_back(new DrumTrack{ "Snare", 38, false, 1.0f, 2, true });
-    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, false, 0.0f, 8, false });
+    mTracks.push_back(new DrumTrack{ "Snare", 38, false, 1.0f, 4, true });
+    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, true, 0.3f, 8, false });
 
     for (int i = 0; i < mTracks.size(); i++) {
         auto name = mTracks[i]->getName();
