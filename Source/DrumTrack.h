@@ -8,13 +8,16 @@ class DrumTrack : private Slider::Listener, private Button::Listener
 public:
     AudioParameterFloat* mProbParam;
     AudioParameterInt* mQuantParam;
+    AudioParameterBool* mOffsetParam; // TODO
+    AudioParameterBool* mMuteParam; // TODO
 
     Slider mProbSlider;
     Slider mQuantSlider;
-    ToggleButton mOffsetButton;
+    TextButton mOffsetButton;
+    TextButton mMuteButton;
 
     DrumTrack();
-    DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization, bool offset);
+    DrumTrack(const std::string& name, juce::int8 note, bool mute, float probability, int quantization, bool offset);
 
     const std::string& getName() const { return mName; }
 

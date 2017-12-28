@@ -4,16 +4,23 @@
 #define frac(x) (x - floor(x))
 
 DrumTrack::DrumTrack()
-    : DrumTrack("", 36, 1.0f, 4, false)
+    : DrumTrack("", 36, false, 1.0f, 4, false)
 {
 }
 
-DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability, int quantization, bool offset)
+DrumTrack::DrumTrack(const std::string& name, juce::int8 note, bool mute, float probability, int quantization, bool offset)
     : mName(name),
       mNote(note),
       mActive(false),
       mLastPos(1)
 {
+    mMuteButton.setButtonText("Mute");
+    mMuteButton.setColour(TextButton::buttonOnColourId, COLOR_HIGHLIGHT);
+    mMuteButton.setColour(TextButton::textColourOffId, COLOR_HIGHLIGHT);
+    mMuteButton.setToggleState(mute, false);
+    
+    mMuteButton.addListener(this);
+
     mProbSlider.setSliderStyle(Slider::RotaryVerticalDrag);
     mProbSlider.setRange(0.0, 1.0, 0.01);
     mProbSlider.setTextBoxStyle(Slider::NoTextBox, false, 90, 30);
@@ -33,8 +40,8 @@ DrumTrack::DrumTrack(const std::string& name, juce::int8 note, float probability
     mQuantSlider.addListener(this);
 
     mOffsetButton.setButtonText("Off Beat");
-    mOffsetButton.setColour(ToggleButton::tickColourId, COLOR_HIGHLIGHT);
-    mOffsetButton.setColour(ToggleButton::tickDisabledColourId, COLOR_HIGHLIGHT);
+    mOffsetButton.setColour(TextButton::buttonOnColourId, COLOR_HIGHLIGHT);
+    mOffsetButton.setColour(TextButton::textColourOffId, COLOR_HIGHLIGHT);
     mOffsetButton.setToggleState(offset, false);
 
     mOffsetButton.addListener(this);
@@ -57,9 +64,10 @@ void DrumTrack::paint(Graphics& g, int x, int y, int w) const
 
 void DrumTrack::resized(int x, int y, int w)
 {
-    mProbSlider.setBounds(x, y + 40, w, w);
-    mQuantSlider.setBounds(x, y + 80, w, w);
-    mOffsetButton.setBounds(x, y + 130, w, 30);
+    mMuteButton.setBounds(x + 0.1 * w, y + 50, 0.8 * w, 20);
+    mProbSlider.setBounds(x, y + 70, w, w);
+    mQuantSlider.setBounds(x, y + 110, w, w);
+    mOffsetButton.setBounds(x + 0.1 * w, y + 160, 0.8 * w, 30);
 }
 
 void DrumTrack::update()
@@ -70,6 +78,11 @@ void DrumTrack::update()
 
 void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, float randomNumber)
 {
+    if (mMuteButton.getToggleState()) {
+        stop(midiMessages);
+        return;
+    }
+
     double beatLen = (currentPlayHead.timeSigNumerator * 4.0) / (currentPlayHead.timeSigDenominator * *mQuantParam);
     double beatPos = fmod(fmod(currentPlayHead.ppqPosition, currentPlayHead.timeSigNumerator), beatLen);
     
@@ -107,7 +120,7 @@ void DrumTrack::sliderValueChanged(Slider* slider)
 
 void DrumTrack::buttonClicked(Button* button)
 {
-    ignoreUnused(button);
+    button->setToggleState(!button->getToggleState(), false);
 }
 
 void DrumTrack::buttonStateChanged(Button* button)

@@ -17,9 +17,10 @@
 PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-    setSize (200, 200);
+    setSize (200, 250);
 
     for (int i = 0; i < processor.mTracks.size(); i++) {
+        addAndMakeVisible(&processor.mTracks[i]->mMuteButton);
         addAndMakeVisible(&processor.mTracks[i]->mProbSlider);
         addAndMakeVisible(&processor.mTracks[i]->mQuantSlider);
         addAndMakeVisible(&processor.mTracks[i]->mOffsetButton);
