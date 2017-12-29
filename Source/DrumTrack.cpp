@@ -93,13 +93,17 @@ void DrumTrack::resized(int x, int y, int w)
     mNoteEditor.setBounds(x + int(0.1 * w), y + 240, 0.8 * w, 25);
 }
 
-void DrumTrack::update()
+void DrumTrack::update(bool updateNote)
 {
     mMuteButton.setToggleState(*mMuteParam, false);
     mProbSlider.setValue(*mProbParam);
     mQuantSlider.setValue(*mQuantParam);
     mVelSlider.setValue(*mVelParam);
     mOffBeatButton.setToggleState(*mOffBeatParam, false);
+
+    if (updateNote) {
+        mNote = std::stoi(mNoteEditor.getText().toStdString());
+    }
 }
 
 void DrumTrack::process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, float randomNumber)

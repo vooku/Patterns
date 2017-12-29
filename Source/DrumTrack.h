@@ -12,7 +12,6 @@ public:
     AudioParameterBool* mMuteParam;
     AudioParameterBool* mOffBeatParam;
     
-
     Slider mProbSlider;
     Slider mQuantSlider;
     Slider mVelSlider;
@@ -27,7 +26,7 @@ public:
     
     void paint(Graphics& g, int x, int y, int w) const;
     void resized(int x, int y, int w);
-    void update();
+    void update(bool updateNote = false);
     void process(MidiBuffer& midiMessages, const AudioPlayHead::CurrentPositionInfo& currentPlayHead, float randomNumber);
     void stop(MidiBuffer& midiMessages);
 
@@ -44,8 +43,6 @@ private:
     bool mActive;
     bool mOffBeatHit;
     
-    // TODO midi message
-
     double mLastPos;
 
     juce::int8 mNote;

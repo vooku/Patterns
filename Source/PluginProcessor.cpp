@@ -43,14 +43,14 @@ PatternsAudioProcessor::PatternsAudioProcessor()
                                                                       mTracks[i]->mProbSlider.getValue()));
         addParameter(mTracks[i]->mQuantParam = new AudioParameterInt(name + " quantization",
                                                                      name + " Quantization",
-                                                                     mTracks[i]->mQuantSlider.getMinimum(),
-                                                                     mTracks[i]->mQuantSlider.getMaximum(),
-                                                                     mTracks[i]->mQuantSlider.getValue()));
+                                                                     (int)mTracks[i]->mQuantSlider.getMinimum(),
+                                                                     (int)mTracks[i]->mQuantSlider.getMaximum(),
+                                                                     (int)mTracks[i]->mQuantSlider.getValue()));
         addParameter(mTracks[i]->mVelParam = new AudioParameterInt(name + " velocity",
                                                                    name + " Velocity",
-                                                                   mTracks[i]->mVelSlider.getMinimum(),
-                                                                   mTracks[i]->mVelSlider.getMaximum(),
-                                                                   mTracks[i]->mVelSlider.getValue()));
+                                                                   (int)mTracks[i]->mVelSlider.getMinimum(),
+                                                                   (int)mTracks[i]->mVelSlider.getMaximum(),
+                                                                   (int)mTracks[i]->mVelSlider.getValue()));
         addParameter(mTracks[i]->mOffBeatParam = new AudioParameterBool(name + " Off Beat",
                                                                        name + " Off Beat",
                                                                        mTracks[i]->mOffBeatButton.getToggleState()));
@@ -175,7 +175,7 @@ void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer
         AudioPlayHead::CurrentPositionInfo currentPlayHead;
         
         if (ph->getCurrentPosition(currentPlayHead)) {
-            debugText = std::to_string(currentPlayHead.ppqPosition - lastppq); lastppq = currentPlayHead.ppqPosition;
+            //debugText = std::to_string(currentPlayHead.ppqPosition - lastppq); lastppq = currentPlayHead.ppqPosition;
             for (auto& track : mTracks) {
                 if (currentPlayHead.isPlaying) {
                     track->process(midiMessages, currentPlayHead, mDistribution(mEngine));
@@ -203,14 +203,29 @@ AudioProcessorEditor* PatternsAudioProcessor::createEditor()
 //==============================================================================
 void PatternsAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    ignoreUnused(destData);
-    //MemoryOutputStream(destData, true).writeInt(*quantization);
+    auto& stream = MemoryOutputStream(destData, true);
+    for (const auto& track : mTracks) {
+        stream.writeBool(*track->mMuteParam);
+        stream.writeFloat(*track->mProbParam);
+        stream.writeInt(*track->mQuantParam);
+        stream.writeInt(*track->mVelParam);
+        stream.writeBool(*track->mOffBeatParam);
+        stream.writeString(track->mNoteEditor.getText());
+    }    
 }
 
 void PatternsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    ignoreUnused(data, sizeInBytes);
-    //*quantization = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readInt();
+    auto& stream = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false);
+    for (auto& track : mTracks) {
+        *track->mMuteParam = stream.readBool();
+        *track->mProbParam = stream.readFloat();
+        *track->mQuantParam = stream.readInt();
+        *track->mVelParam = stream.readInt();
+        *track->mOffBeatParam = stream.readBool();
+        track->mNoteEditor.setText(stream.readString());
+        track->update(true);
+    }
 }
 
 //==============================================================================
