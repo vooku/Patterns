@@ -61,7 +61,9 @@ DrumTrack::DrumTrack(const std::string& name,
 
     mOffBeatButton.addListener(this);
 
-    mNoteEditor.setText("Note");
+    mNoteEditor.setText(std::to_string(note));
+    mNoteEditor.setTextToShowWhenEmpty("Note", COLOR_FRAME);
+    mNoteEditor.setInputFilter(new TextEditor::LengthAndCharacterRestriction(3, "0123456789"), true);
 
     mNoteEditor.addListener(this);
 }
@@ -177,9 +179,28 @@ void DrumTrack::buttonStateChanged(Button* button)
     ignoreUnused(button);
 }
 
-void DrumTrack::textEditorTextChanged(TextEditor& textEditor)
+void DrumTrack::textEditorEscapeKeyPressed(TextEditor& textEditor)
 {
-    //if (textEditor.)
+    mNoteEditor.setText(std::to_string(mNote));
 }
+
+void DrumTrack::textEditorReturnKeyPressed(TextEditor& textEditor)
+{
+    Component::unfocusAllComponents(); // calls textEditorFocusLost()
+}
+
+void DrumTrack::textEditorFocusLost(TextEditor& textEditor)
+{
+    if (!textEditor.isEmpty()) {
+        int newNote = std::stoi(textEditor.getText().toStdString());
+
+        if (newNote >= 0 && newNote < 128) {
+            mNote = newNote;
+        }
+    }
+
+    mNoteEditor.setText(std::to_string(mNote));
+}
+
 
 

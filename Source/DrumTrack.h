@@ -35,7 +35,9 @@ private:
     void sliderValueChanged(Slider* slider) override;
     void buttonClicked(Button* button) override;
     void buttonStateChanged(Button* button) override;
-    void textEditorTextChanged(TextEditor& textEditor) override;
+    void textEditorEscapeKeyPressed(TextEditor& textEditor) override;
+    void textEditorReturnKeyPressed(TextEditor& textEditor) override;
+    void textEditorFocusLost(TextEditor& textEditor) override;
 
     // TODO icon
     std::string mName;
