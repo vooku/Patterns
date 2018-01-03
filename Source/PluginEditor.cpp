@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin editor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -17,7 +7,7 @@
 PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-    setSize (200, 300);
+    setSize (450, 320);
 
     for (int i = 0; i < processor.mTracks.size(); i++) {
         addAndMakeVisible(&processor.mTracks[i]->mMuteButton);

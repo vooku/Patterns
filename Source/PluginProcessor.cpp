@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -28,8 +18,13 @@ PatternsAudioProcessor::PatternsAudioProcessor()
       debugText("PATTERNS"), lastppq(0)
 {
     mTracks.push_back(new DrumTrack{ "Kick", 36, false, 1.0f, 2, 127, false });
-    mTracks.push_back(new DrumTrack{ "Snare", 38, false, 1.0f, 4, 127, true });
-    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, true, 0.3f, 8, 127, false });
+    mTracks.push_back(new DrumTrack{ "Snare", 38, false, 1.0f, 2, 127, true });
+    mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, false, 0.3f, 8, 63, false });
+    mTracks.push_back(new DrumTrack{ "Tom", 45, false, 0.3f, 8, 127, false });
+    mTracks.push_back(new DrumTrack{ "Mot", 50, true, 0.3f, 8, 127, false });
+    mTracks.push_back(new DrumTrack{ "Tah-Ih", 46, true, 0.2f, 8, 63, true });
+    mTracks.push_back(new DrumTrack{ "Erans", 40, false, 0.2f, 16, 100, false });
+    mTracks.push_back(new DrumTrack{ "Kcik", 35, true, 0.75f, 4, 63, true });
 
     for (int i = 0; i < mTracks.size(); i++) {
         auto name = mTracks[i]->getName();
@@ -218,6 +213,8 @@ void PatternsAudioProcessor::setStateInformation (const void* data, int sizeInBy
 {
     auto& stream = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false);
     for (auto& track : mTracks) {
+        if (stream.getNumBytesRemaining() < 2 * sizeof(bool) + sizeof(float) + 2 * sizeof(int) + 1)
+            break;
         *track->mMuteParam = stream.readBool();
         *track->mProbParam = stream.readFloat();
         *track->mQuantParam = stream.readInt();
