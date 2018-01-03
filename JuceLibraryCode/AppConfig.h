@@ -23,7 +23,10 @@
 #endif
 
 #define COLOR_HIGHLIGHT Colours::deeppink
-#define COLOR_FRAME Colours::darkgrey
+#define COLOR_DARKER Colour(24, 31, 34)
+#define DOT_D 10
+#define FONTSIZE_DEFAULT 16.0f
+#define FONTSIZE_SMALL 10.0f
 
 // [END_USER_CODE_SECTION]
 

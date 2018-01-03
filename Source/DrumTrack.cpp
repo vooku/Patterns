@@ -1,8 +1,5 @@
 #include "DrumTrack.h"
 
-#define DOT_D 10
-#define frac(x) (x - floor(x))
-
 DrumTrack::DrumTrack()
     : DrumTrack("", 36, false, 1.0f, 4, 127, false)
 {
@@ -62,7 +59,6 @@ DrumTrack::DrumTrack(const std::string& name,
     mOffBeatButton.addListener(this);
 
     mNoteEditor.setText(std::to_string(note));
-    mNoteEditor.setTextToShowWhenEmpty("Note", COLOR_FRAME);
     mNoteEditor.setInputFilter(new TextEditor::LengthAndCharacterRestriction(3, "0123456789"), true);
 
     mNoteEditor.addListener(this);
@@ -71,16 +67,20 @@ DrumTrack::DrumTrack(const std::string& name,
 void DrumTrack::paint(Graphics& g, int x, int y, int w) const
 {
     g.setColour(COLOR_HIGHLIGHT);
+    g.setFont(FONTSIZE_DEFAULT);
     g.drawFittedText(mName, x, y, w, 30, Justification::centred, 1);
-
-    g.setColour(COLOR_FRAME);
-    float ringD = 1.2f * DOT_D;
-    g.drawEllipse(x + 0.5f * (w - ringD), y + 35 - 0.5f * ringD, ringD, ringD, 2.0f);
 
     if (mActive) {
         g.setColour(COLOR_HIGHLIGHT);
-        g.fillEllipse(x + 0.5f * (w - DOT_D), y + 35 - 0.5f * DOT_D, DOT_D, DOT_D);
     }
+    else {
+        g.setColour(COLOR_DARKER);
+    }
+    g.fillEllipse(x + 0.5f * (w - DOT_D), y + 35 - 0.5f * DOT_D, DOT_D, DOT_D);
+
+    g.setColour(COLOR_HIGHLIGHT);
+    g.setFont(FONTSIZE_SMALL);
+    g.drawFittedText("MIDI\nnote", x, y + 265, w, 30, Justification::centred, 1);
 }
 
 void DrumTrack::resized(int x, int y, int w)

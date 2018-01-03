@@ -7,7 +7,7 @@
 PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-    setSize (450, 320);
+    setSize (450, 330);
 
     mThroughButton.setButtonText("MIDI through");
     mThroughButton.setColour(TextButton::buttonOnColourId, COLOR_HIGHLIGHT);

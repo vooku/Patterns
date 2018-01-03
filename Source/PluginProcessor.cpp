@@ -15,16 +15,16 @@ PatternsAudioProcessor::PatternsAudioProcessor()
 #endif
       mEngine(mRandomDevice()),
       mDistribution(0.0f, 1.0f),
-      debugText("PATTERNS"),
+      debugText("PATTERNS v1.0"),
       mMidiThrough(true)
 {
     mTracks.push_back(new DrumTrack{ "Kick", 36, false, 1.0f, 2, 127, false });
     mTracks.push_back(new DrumTrack{ "Snare", 38, false, 1.0f, 2, 127, true });
     mTracks.push_back(new DrumTrack{ "Hi-Hat", 42, false, 0.3f, 8, 63, false });
-    mTracks.push_back(new DrumTrack{ "Tom", 45, false, 0.3f, 8, 127, false });
-    mTracks.push_back(new DrumTrack{ "Mot", 50, true, 0.3f, 8, 127, false });
+    mTracks.push_back(new DrumTrack{ "Tom", 45, false, 0.3f, 8, 100, false });
+    mTracks.push_back(new DrumTrack{ "Mot", 50, true, 0.3f, 8, 100, false });
     mTracks.push_back(new DrumTrack{ "Tah-Ih", 46, true, 0.2f, 8, 63, true });
-    mTracks.push_back(new DrumTrack{ "Erans", 40, false, 0.2f, 16, 100, false });
+    mTracks.push_back(new DrumTrack{ "Erans", 40, true, 0.2f, 16, 100, false });
     mTracks.push_back(new DrumTrack{ "Kcik", 35, true, 0.75f, 4, 63, true });
 
     for (int i = 0; i < mTracks.size(); i++) {
