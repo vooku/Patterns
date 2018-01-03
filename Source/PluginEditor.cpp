@@ -9,6 +9,14 @@ PatternsAudioProcessorEditor::PatternsAudioProcessorEditor (PatternsAudioProcess
 {
     setSize (450, 320);
 
+    mThroughButton.setButtonText("MIDI through");
+    mThroughButton.setColour(TextButton::buttonOnColourId, COLOR_HIGHLIGHT);
+    mThroughButton.setColour(TextButton::textColourOffId, COLOR_HIGHLIGHT);
+    mThroughButton.setToggleState(true, false);
+    mThroughButton.addListener(this);
+
+    addAndMakeVisible(&mThroughButton);
+
     for (int i = 0; i < processor.mTracks.size(); i++) {
         addAndMakeVisible(&processor.mTracks[i]->mMuteButton);
         addAndMakeVisible(&processor.mTracks[i]->mProbSlider);
@@ -45,6 +53,8 @@ void PatternsAudioProcessorEditor::paint (Graphics& g)
 
 void PatternsAudioProcessorEditor::resized()
 {
+    mThroughButton.setBounds(0.5 * TRACK_OFFSET, 10, 2 * TRACK_OFFSET, 20);
+
     for (int i = 0; i < processor.mTracks.size(); i++) {
         processor.mTracks[i]->resized((i + 0.5) * TRACK_OFFSET, 30, TRACK_OFFSET);
     }
@@ -56,5 +66,17 @@ void PatternsAudioProcessorEditor::timerCallback()
         processor.mTracks[i]->update();
     }
 
-    repaint(); // TODO remove this ???
+    repaint();
+}
+
+void PatternsAudioProcessorEditor::buttonClicked(Button* button)
+{
+    button->setToggleState(!button->getToggleState(), false);
+
+    processor.setMidiThrough(mThroughButton.getToggleState());
+}
+
+void PatternsAudioProcessorEditor::buttonStateChanged(Button* button)
+{
+    ignoreUnused(button);
 }

@@ -3,7 +3,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <string>
 
-class DrumTrack : private Slider::Listener, private Button::Listener, private TextEditor::Listener
+class DrumTrack : private Slider::Listener,
+                  private Button::Listener,
+                  private TextEditor::Listener
 {
 public:
     AudioParameterFloat* mProbParam;

@@ -15,7 +15,8 @@ PatternsAudioProcessor::PatternsAudioProcessor()
 #endif
       mEngine(mRandomDevice()),
       mDistribution(0.0f, 1.0f),
-      debugText("PATTERNS"), lastppq(0)
+      debugText("PATTERNS"),
+      mMidiThrough(true)
 {
     mTracks.push_back(new DrumTrack{ "Kick", 36, false, 1.0f, 2, 127, false });
     mTracks.push_back(new DrumTrack{ "Snare", 38, false, 1.0f, 2, 127, true });
@@ -165,6 +166,8 @@ bool PatternsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 void PatternsAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 { 
     buffer.clear();
+    if (!mMidiThrough)
+        midiMessages.clear();
     
     if (AudioPlayHead* ph = getPlayHead()) {
         AudioPlayHead::CurrentPositionInfo currentPlayHead;

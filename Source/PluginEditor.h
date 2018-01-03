@@ -6,8 +6,9 @@
 //==============================================================================
 /**
 */
-class PatternsAudioProcessorEditor  : public AudioProcessorEditor,
-                                      public Timer
+class PatternsAudioProcessorEditor : public AudioProcessorEditor,
+                                     public Timer,
+                                     private Button::Listener
 {
 public:
     PatternsAudioProcessorEditor (PatternsAudioProcessor&);
@@ -20,9 +21,12 @@ public:
     void timerCallback() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
+    void buttonClicked(Button* button) override;
+    void buttonStateChanged(Button* button) override;
+
     PatternsAudioProcessor& processor;
+
+    TextButton mThroughButton;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PatternsAudioProcessorEditor)
 };

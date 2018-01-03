@@ -52,11 +52,14 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    void setMidiThrough(bool val) { mMidiThrough = val; }
+
 private:
     std::random_device mRandomDevice;
     std::mt19937_64 mEngine;
     std::uniform_real_distribution<float> mDistribution;
-    double lastppq;
+    
+    bool mMidiThrough;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PatternsAudioProcessor)
 };
