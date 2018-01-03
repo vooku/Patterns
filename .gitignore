@@ -17,9 +17,8 @@ Builds/VisualStudio2017/x64/*
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
-*.vst3
-*.vst
+#*.dll
+#*.vst3
 
 # Fortran module files
 *.mod
