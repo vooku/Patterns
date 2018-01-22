@@ -1,5 +1,7 @@
 Builds/VisualStudio2017/.vs/*
 Builds/VisualStudio2017/x64/*
+Builds/MacOSX/build/*
+xcuserdata/
 
 # Prerequisites
 *.d
