@@ -2,7 +2,7 @@
 A VST MIDI sequencer with probabilities as inputs developed at [University of Ljubljana](https://www.fri.uni-lj.si). Intended to spice up your drum loops with some random (but controlled!) fills or just straight up generate drum patterns (hence the name).
 
 ## Download
-You can download a [Windows 64bit VST](./bin/Patterns.dll). Mac version is expected when I get access to a Mac.
+You can download a [Windows 64bit VST](./bin/Patterns.dll) and a [macOS 64bit VST archive](./bin/Patterns_mac.vst.zip).
 
 ## Interface
 The interface consists of 8 drum tracks -- Kick, Snare, Hi-Hat, Tom and their respective inverses Mot, Tah-Ih, Erans and Kcik (wow so funny). This is based on my personal preference as I tend to set my drum machines with two kicks and two snares, but since you can choose the MIDI note for each track the names are just arbitrary. From top to bottom on each track you can find the name, activity indicator, mute button, probability, quantization and velocity sliders, the off beat button and the MIDI note.
