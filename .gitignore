@@ -34,3 +34,5 @@ Builds/VisualStudio2017/x64/*
 *.exe
 *.out
 *.app
+
+.DS_Store
