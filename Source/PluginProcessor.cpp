@@ -201,7 +201,7 @@ AudioProcessorEditor* PatternsAudioProcessor::createEditor()
 //==============================================================================
 void PatternsAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    auto& stream = MemoryOutputStream(destData, true);
+    MemoryOutputStream stream(destData, true);
     for (const auto& track : mTracks) {
         stream.writeBool(*track->mMuteParam);
         stream.writeFloat(*track->mProbParam);
@@ -214,7 +214,7 @@ void PatternsAudioProcessor::getStateInformation (MemoryBlock& destData)
 
 void PatternsAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    auto& stream = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false);
+    MemoryInputStream stream(data, static_cast<size_t> (sizeInBytes), false);
     for (auto& track : mTracks) {
         if (stream.getNumBytesRemaining() < 2 * sizeof(bool) + sizeof(float) + 2 * sizeof(int) + 1)
             break;
